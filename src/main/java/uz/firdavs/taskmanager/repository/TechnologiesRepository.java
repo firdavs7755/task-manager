@@ -22,7 +22,4 @@ public interface TechnologiesRepository extends JpaRepository<Technologies,Integ
     @Query(nativeQuery = true,
             value = "select t.* from technologies t where t.technology_part_id= ?1")
     List<Technologies> selectTechnologiesByTechPartId(Integer partId);
-
-
-
 }
