@@ -1,13 +1,12 @@
 package uz.firdavs.taskmanager.service;
 
  import uz.firdavs.taskmanager.dto.ResponseDto;
-import uz.firdavs.taskmanager.req.ReqTechnologies;
+import uz.firdavs.taskmanager.payload.rq.TechnologyRqDto;
+ import uz.firdavs.taskmanager.service.base.BaseService;
 
-public interface TechnologiesService {
-    ResponseDto<?> getTechnologies();
-    ResponseDto<?> getTechnologyById(Integer id);
-    ResponseDto<?> getTechnologyByTechPartId(Integer techPartId);
-    ResponseDto<?> createTechnology(ReqTechnologies reqName);
-    ResponseDto<?> editTechnologyById(ReqTechnologies reqName, Integer id);
-    ResponseDto<?> deleteTechnologyById(Integer id);
+public interface TechnologiesService extends BaseService {
+    ResponseDto<?> createRow(TechnologyRqDto req);
+    ResponseDto<?> editRowById(TechnologyRqDto req, Integer id);
+    /*ResponseDto<?> getTechnologyByTechPartId(Integer id);*/
+
 }

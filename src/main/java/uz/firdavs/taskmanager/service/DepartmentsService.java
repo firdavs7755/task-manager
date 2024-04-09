@@ -1,13 +1,12 @@
 package uz.firdavs.taskmanager.service;
 
  import uz.firdavs.taskmanager.dto.ResponseDto;
-import uz.firdavs.taskmanager.req.ReqName;
+ import uz.firdavs.taskmanager.payload.rq.DepartmentRqDto;
+ import uz.firdavs.taskmanager.payload.rq.NameRq;
+ import uz.firdavs.taskmanager.service.base.BaseService;
 
-public interface DepartmentsService {
-    ResponseDto<?> getDepartments();
-    ResponseDto<?> getDepartmentById(Integer id);
+public interface DepartmentsService extends BaseService {
     ResponseDto<?> selectEmpsSectionByDepar();
-    ResponseDto<?> createDepartment(ReqName reqName);
-    ResponseDto<?> editDepartmentById(ReqName reqName, Integer id);
-    ResponseDto<?> deleteDepartmentById(Integer id);
+    ResponseDto<?> createRow(DepartmentRqDto req);
+    ResponseDto<?> editRowById(DepartmentRqDto req, Integer id);
 }

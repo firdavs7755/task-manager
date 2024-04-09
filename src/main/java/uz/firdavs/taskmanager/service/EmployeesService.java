@@ -1,13 +1,11 @@
 package uz.firdavs.taskmanager.service;
 
  import uz.firdavs.taskmanager.dto.ResponseDto;
- import uz.firdavs.taskmanager.req.ReqEmployees;
- import uz.firdavs.taskmanager.req.ReqName;
+ import uz.firdavs.taskmanager.payload.rq.EmployeeRqDto;
+ import uz.firdavs.taskmanager.service.base.BaseService;
 
-public interface EmployeesService {
-    ResponseDto<?> getEmployees();
-    ResponseDto<?> getEmployeeById(Integer id);
-    ResponseDto<?> createEmployee(ReqEmployees reqEmployees);
-    ResponseDto<?> editEmployeeById(ReqEmployees reqEmployees, Integer id);
-    ResponseDto<?> deleteEmployeeById(Integer id);
+public interface EmployeesService extends BaseService {
+    ResponseDto<?> selectEmployees();
+    ResponseDto<?> createRow(EmployeeRqDto employeeRqDto);
+    ResponseDto<?> editRowById(EmployeeRqDto employeeRqDto, Integer id);
 }

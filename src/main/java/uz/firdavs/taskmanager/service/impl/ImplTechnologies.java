@@ -1,68 +1,70 @@
 package uz.firdavs.taskmanager.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import uz.firdavs.taskmanager.dto.ResponseDto;
-import uz.firdavs.taskmanager.entity.Technologies;
-import uz.firdavs.taskmanager.projections.TechnologiesProjection;
-import uz.firdavs.taskmanager.repository.TechnologiesRepository;
-import uz.firdavs.taskmanager.req.ReqTechnologies;
+import uz.firdavs.taskmanager.entity.Technology;
+import uz.firdavs.taskmanager.entity.TechnologyPart;
+import uz.firdavs.taskmanager.mapper.TechnologyMapper;
+import uz.firdavs.taskmanager.repository.TechnologyPartRepository;
+import uz.firdavs.taskmanager.repository.TechnologyRepository;
+import uz.firdavs.taskmanager.payload.rq.TechnologyRqDto;
 import uz.firdavs.taskmanager.service.TechnologiesService;
+import uz.firdavs.taskmanager.specifications.TechnologySpecification;
+import uz.firdavs.taskmanager.utis.Utils;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class ImplTechnologies implements TechnologiesService {
-    @Autowired
-    TechnologiesRepository repository;
-    @Override
-    public ResponseDto<?> getTechnologies() {
-//        List<Technologies> all = repository.findAll();
-//        if (all.size()>0){
-//            return new ResponseDto<>(true,"ok",all);
-//        }
-        List<TechnologiesProjection> selectTechnologies = repository.selectTechnologies();
-        if (selectTechnologies.size()>0){
-            return new ResponseDto<>(true,"ok",selectTechnologies);
-        }
-        return new ResponseDto<>(false,"malumotlat topilmadi");
-    }
+
+    private final TechnologyRepository repository;
+    private final TechnologyPartRepository technologyPartRepository;
+    private final TechnologyMapper mapper;
+
 
     @Override
-    public ResponseDto<?> getTechnologyById(Integer id) {
-        Optional<Technologies> byId = repository.findById(id);
+    public ResponseDto<?> getRowById(Integer id) {
+        Optional<Technology> byId = repository.findById(id);
         if (byId.isPresent()){
             return new ResponseDto<>(true,"ok",byId);
         }
-        return new ResponseDto<>(false,"byunday malumot topilmadi id:",id);
+        return new ResponseDto<>(false,"byunday malumot topilmadi id:"+id);
     }
 
-    @Override
+/*    @Override
     public ResponseDto<?> getTechnologyByTechPartId(Integer techPartId) {
         if (techPartId==100){//todo fullStack
-            List<Technologies> all = repository.findAll();
+            List<Technology> all = repository.findAll();
             return new ResponseDto<>(true,"ok",all);
         }else {
-            List<Technologies> allByTechnology_part_id = repository.selectTechnologiesByTechPartId(techPartId);
+            List<Technology> allByTechnology_part_id = repository.selectTechnologiesByTechPartId(techPartId);
             return new ResponseDto<>(true,"ok",allByTechnology_part_id);
         }
-    }
+    }*/
 
 
     @Override
-    public ResponseDto<?> createTechnology(ReqTechnologies reqTechnologies) {
-        Technologies technologies = new Technologies();
-        technologies.setName(reqTechnologies.getName().toUpperCase());
-        technologies.setTechnology_part_id(reqTechnologies.getTechnology_part_id());
+    public ResponseDto<?> createRow(TechnologyRqDto req) {
+        Technology technology = new Technology();
+        technology.setName(req.getName());
+        Optional<TechnologyPart> technologyPart = technologyPartRepository.findById(req.getTechnology_part_id());
+        if (!technologyPart.isPresent()){
+            return new ResponseDto<>(false,"Obyekt topilmadi");
+        }
+        technology.setTechnologyPart(technologyPart.get());
         try {
-            int i = repository.countByName(reqTechnologies.getName().toUpperCase());
+            int i = repository.countByName(req.getName());
             if (i>0){
                 return new ResponseDto<>(false,"Texnologiya mavjud");
             }
-            repository.save(technologies);
+            repository.save(technology);
             return new ResponseDto<>(true,"yaratildi");
         } catch (Exception e){
             log.error("Malarial bilan ishlashda xatolik "+e.getMessage());
@@ -73,15 +75,19 @@ public class ImplTechnologies implements TechnologiesService {
 
 
     @Override
-    public ResponseDto<?> editTechnologyById(ReqTechnologies reqTechnologies, Integer id) {
-        Optional<Technologies> byId = repository.findById(id);
+    public ResponseDto<?> editRowById(TechnologyRqDto req, Integer id) {
+        Optional<Technology> byId = repository.findById(id);
         if (byId.isPresent()){
-            Technologies technologies = new Technologies();
-            technologies.setName(reqTechnologies.getName());
-            technologies.setTechnology_part_id(reqTechnologies.getTechnology_part_id());
-            technologies.setId(id);
+            Technology technology = new Technology();
+            technology.setName(req.getName());
+            Optional<TechnologyPart> technologyPart = technologyPartRepository.findById(req.getTechnology_part_id());
+            if (!technologyPart.isPresent()){
+                return new ResponseDto<>(false,"Obyekt topilmadi");
+            }
+            technology.setTechnologyPart(technologyPart.get());
+            technology.setId(id);
             try {
-                repository.save(technologies);
+                repository.save(technology);
                 return new ResponseDto<>(true,"Muvaffaqiyatli tahrirlandi id:"+id);
             } catch (Exception e){
                 log.error("Tahrirlashda xatolik "+e.getMessage());
@@ -91,9 +97,19 @@ public class ImplTechnologies implements TechnologiesService {
         return new ResponseDto<>(false,"Obyekt topilmadi id:"+id);
     }
 
+
+
     @Override
-    public ResponseDto<?> deleteTechnologyById(Integer id) {
-        Optional<Technologies> byId = repository.findById(id);
+    public ResponseDto<?> findAll(Map<String, Object> map) {
+        Specification<Technology> specs = TechnologySpecification.filterTable(map);
+        Specification<Technology> combinedSpecs = Specification.where(specs);
+        return Utils.generatePageable(repository, combinedSpecs, mapper, map);
+    }
+
+
+    @Override
+    public ResponseDto<?> deleteRowById(Integer id) {
+        Optional<Technology> byId = repository.findById(id);
         if (byId.isPresent()){
             repository.deleteById(id);
             return new ResponseDto<>(true,"Muvaffaqiyatli bajarildi");
