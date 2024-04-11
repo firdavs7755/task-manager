@@ -13,6 +13,7 @@ public class ResponseDto<T> {
     private Integer count;
     private Integer code;
     private String message;
+    private String token;
     private Integer page;
     private Integer pageSize;
     private Integer totalPages;
@@ -22,6 +23,13 @@ public class ResponseDto<T> {
 
     public ResponseDto(Boolean success) {
         this.success = success;
+    }
+
+    public ResponseDto(Boolean success,String message, String token, T data) {
+        this.message = message;
+        this.token = token;
+        this.success = success;
+        this.data = data;
     }
 
     public ResponseDto(Boolean success, Integer code, String message) {

@@ -21,6 +21,11 @@ public interface TokenRepository extends BaseRepository<Token,Integer> {
     @Query(nativeQuery = true,value = "delete from token t where t.token =:token")
     int deleteByToken (String token);
 
+    @Modifying
+    @Transactional
+    @Query(nativeQuery = true,value = "delete from token t where t.user_id =:userId")
+    int deleteByUserId (Integer userId);
+
 
     Optional<Token> findTokenByToken (String token);
 

@@ -35,6 +35,7 @@ public class SecurityConfig {
                 .authorizeRequests()
                 .antMatchers("/auth/one").permitAll()
                 .antMatchers("/auth/login").permitAll()
+                .antMatchers("/auth/check").permitAll()
                 .anyRequest().authenticated();
 
 

@@ -59,12 +59,10 @@ public class ImplDepartment implements DepartmentsService {
     public ResponseDto<?> createRow(DepartmentRqDto req) {
         Department entity = new Department();
         entity.setName(req.getName());
-        Optional<Director> director = directorRepository.findById(req.getDirector_id());
-        if (!director.isPresent()) {
-            return new ResponseDto<>(false, "Data not found id:" + req.getDirector_id());
-
+        if (req.getDirector_id()!=null){
+            Optional<Director> director = directorRepository.findById(req.getDirector_id());
+            director.ifPresent(entity::setDirector);
         }
-        entity.setDirector(director.get());
         try {
             repository.save(entity);
             return new ResponseDto<>(true, "Success created ");

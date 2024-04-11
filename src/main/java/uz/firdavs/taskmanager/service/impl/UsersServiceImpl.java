@@ -1,18 +1,13 @@
 package uz.firdavs.taskmanager.service.impl;
 
-import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Service;
 import uz.firdavs.taskmanager.config.AuthenticationCheck;
 import uz.firdavs.taskmanager.config.JwtService;
-import uz.firdavs.taskmanager.config.UserPrincipal;
 import uz.firdavs.taskmanager.dto.ResponseDto;
 import uz.firdavs.taskmanager.entity.Token;
 import uz.firdavs.taskmanager.entity.Users;
@@ -23,11 +18,11 @@ import uz.firdavs.taskmanager.repository.RoleRepository;
 import uz.firdavs.taskmanager.repository.TokenRepository;
 import uz.firdavs.taskmanager.repository.UsersRepository;
 import uz.firdavs.taskmanager.service.UsersService;
-import uz.firdavs.taskmanager.utis.Utils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 
@@ -64,7 +59,7 @@ public class UsersServiceImpl implements UsersService {
     public ResponseDto<?> login(HttpServletRequest request,ReqAuth reqAuth) {
         Optional<Users> byUsername = repository.findByUsername(reqAuth.getUsername());
         if (byUsername.isPresent()) {
-            if (passwordEncoder.matches(reqAuth.getPassword(),byUsername.get().getPassword())) {
+            if (passwordEncoder.matches(reqAuth.getPassword(),byUsername.get().getPassword()) && byUsername.get().getUsername().equals(reqAuth.getUsername())) {
 
                 String jwt = JwtService.generateToken(reqAuth);
                 Token token = new Token();
@@ -72,7 +67,8 @@ public class UsersServiceImpl implements UsersService {
                 token.setToken(jwt);
                 token.setUser(byUsername.get());
                 tokenRepository.save(token);
-                return new ResponseDto<>(true, "ok",jwt);
+                List<Map<String,Object>> userRoles = repository.selectUserRoles(byUsername.get().getId());
+                return new ResponseDto<>(true, "ok",jwt,userRoles);
             }
             return new ResponseDto<>(false, "!!!Ops password or username wrong!");
         }
@@ -84,7 +80,8 @@ public class UsersServiceImpl implements UsersService {
         Optional<Token> token = tokenRepository.findTokenByToken(jwtService.getJwtFromRequest(request).substring(7));
         if (!token.get().getToken().isEmpty()){
             int i = tokenRepository.deleteByToken(token.get().getToken());
-            System.out.printf("I:"+i);
+            tokenRepository.deleteByUserId(token.get().getUser().getId());
+            System.out.println("I:"+i);
             SecurityContextHolder.clearContext();
             System.out.println("logged out !");
             return new ResponseDto<>(true,"logged out !");
