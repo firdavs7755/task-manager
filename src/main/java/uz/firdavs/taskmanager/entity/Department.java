@@ -23,4 +23,9 @@ public class Department {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "director_id")
     private Director director;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "created_user_id")
+    private Users created_user;
+
 }

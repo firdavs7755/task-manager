@@ -12,6 +12,8 @@ import java.util.List;
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE,componentModel = "spring")
 public interface TechnologyMapper extends BaseMapper<TechnologyRsDto, Technology> {
     @Override
+    @Mapping(target = "created_user_id", source = "created_user.id")
+    @Mapping(target = "created_user_fio", source = "created_user.fio")
     @Mapping(target = "technology_part_id", source = "technologyPart.id")
     @Mapping(target = "technology_part_name", source = "technologyPart.name")
     public TechnologyRsDto toResponse(Technology technology) ;

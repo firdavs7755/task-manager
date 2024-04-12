@@ -4,8 +4,7 @@ package uz.firdavs.taskmanager.config;
 import io.jsonwebtoken.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-import uz.firdavs.taskmanager.payload.ReqAuth;
-import uz.firdavs.taskmanager.repository.TokenRepository;
+import uz.firdavs.taskmanager.payload.rq.ReqAuth;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;

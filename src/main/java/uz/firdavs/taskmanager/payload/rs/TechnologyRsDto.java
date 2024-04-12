@@ -12,4 +12,6 @@ public class TechnologyRsDto extends BaseId {
     private String name;
     private Integer technology_part_id;
     private String technology_part_name;
+    private Integer created_user_id;
+    private String created_user_fio;
 }

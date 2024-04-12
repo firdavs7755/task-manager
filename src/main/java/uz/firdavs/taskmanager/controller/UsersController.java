@@ -9,15 +9,15 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import uz.firdavs.taskmanager.dto.ResponseDto;
-import uz.firdavs.taskmanager.payload.ReqAuth;
-import uz.firdavs.taskmanager.payload.ReqUser;
+import uz.firdavs.taskmanager.payload.rq.ReqAuth;
+import uz.firdavs.taskmanager.payload.rq.ReqUser;
 import uz.firdavs.taskmanager.service.UsersService;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/auth")
-//@CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 public class UsersController {
 

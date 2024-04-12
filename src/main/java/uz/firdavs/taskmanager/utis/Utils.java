@@ -15,6 +15,7 @@ import uz.firdavs.taskmanager.repository.base.BaseRepository;
 
 import javax.swing.text.StyleContext;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -43,6 +44,19 @@ public class Utils {
             );
         }
         log.error("err. Данные недоступны ! cnt:"+all.getContent().size());
+        return new ResponseDto<>(false,"Данные недоступны !",new ArrayList<>());
+    }
+
+    public static <T,Dto> ResponseDto<?> generatePageable(BaseRepository<T, ?> repository,  BaseMapper<Dto,T> mapper) {
+        List<T> all = repository.findAll();
+        if (!all.isEmpty()){
+            return new ResponseDto<>(
+                    true,
+                    "Данные доступны !",
+                    mapper.toResponseList(all)
+            );
+        }
+        log.error("err. Данные недоступны ! cnt:"+all.size());
         return new ResponseDto<>(false,"Данные недоступны !",new ArrayList<>());
     }
 

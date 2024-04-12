@@ -19,4 +19,9 @@ public class TechnologyPart {
 
     @Column(nullable = false)
     private String name;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "created_user_id")
+    private Users created_user;
+
 }

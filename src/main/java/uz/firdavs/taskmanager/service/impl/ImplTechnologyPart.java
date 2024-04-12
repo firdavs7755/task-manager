@@ -42,6 +42,7 @@ public class ImplTechnologyPart implements TechnologyPartService {
     public ResponseDto<?> createRow(TechnologyPartRqDto req) {
         TechnologyPart technologies = new TechnologyPart();
         technologies.setName(req.getName());
+        technologies.setCreated_user(Utils.getUser());
         try {
             repository.save(technologies);
             return new ResponseDto<>(true,"yaratildi");

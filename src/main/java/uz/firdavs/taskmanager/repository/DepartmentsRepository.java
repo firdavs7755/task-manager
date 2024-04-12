@@ -13,7 +13,7 @@ import java.util.List;
 
 public interface DepartmentsRepository extends BaseRepository<Department,Integer> {
     @Override
-    @EntityGraph(attributePaths = {"director"})
+    @EntityGraph(attributePaths = {"director","created_user"})
     Page<Department> findAll(Specification<Department> spec, Pageable pageable);
 
     @Query(nativeQuery = true,

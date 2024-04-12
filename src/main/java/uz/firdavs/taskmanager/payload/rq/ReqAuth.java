@@ -1,4 +1,4 @@
-package uz.firdavs.taskmanager.payload;
+package uz.firdavs.taskmanager.payload.rq;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

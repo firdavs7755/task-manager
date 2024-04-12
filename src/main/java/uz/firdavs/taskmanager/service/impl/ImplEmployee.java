@@ -36,7 +36,7 @@ import java.util.*;
 public class ImplEmployee implements EmployeesService {
 
     private final EmployeeRepository repository;
-    private final TechnologyRepository  technologyRepository;
+    private final TechnologyRepository technologyRepository;
     private final DepartmentsRepository departmentsRepository;
     private final EmployeeMapper mapper;
     private final EmployeeTechnologyRepository employeeTechnologyRepository;
@@ -66,20 +66,32 @@ public class ImplEmployee implements EmployeesService {
 
 
     @Override
-    public ResponseDto<?> selectEmployees() {
-        List<EmployeesProjection> employeesProjections = repository.selectEmployees();
-        if (employeesProjections.size()>0){
-            return new ResponseDto<>(true,"OK",employeesProjections);
+    public ResponseDto<?> selectEmployees(Map<String, Object> map) {
+        System.out.println("MAP:" + map);
+        List<EmployeesProjection> employeesProjections = new ArrayList<>();
+        if (map.get("id") != null) {
+            Integer id = Integer.parseInt(map.get("id").toString());
+            employeesProjections = repository.selectEmployees(id);
+            if (employeesProjections.size() > 0) {
+                return new ResponseDto<>(true, "OK", employeesProjections);
+            }
+        } else {
+            employeesProjections = repository.selectEmployees();
+            if (employeesProjections.size() > 0) {
+                return new ResponseDto<>(true, "OK", employeesProjections);
+            }
         }
-        return new ResponseDto<>(false,"no data",new ArrayList<>());
+
+        return new ResponseDto<>(false, "no data", new ArrayList<>());
     }
 
     @Override
     public ResponseDto<?> createRow(EmployeeRqDto req) {
         Employee emp = new Employee();
         emp.setName(req.getName());
+        emp.setCreated_user(Utils.getUser());
         Optional<Department> department = departmentsRepository.findById(req.getDepartments_id());
-        if (!department.isPresent()){
+        if (!department.isPresent()) {
             return new ResponseDto<>(false, "Data not found id:" + req.getDepartments_id());
 
         }
@@ -92,7 +104,7 @@ public class ImplEmployee implements EmployeesService {
 
                 for (Integer techId : req.getIdsList()) {
                     Optional<Technology> technology = technologyRepository.findById(techId);
-                    if (!technology.isPresent()){
+                    if (!technology.isPresent()) {
                         return new ResponseDto<>(false, "Data not found id:" + techId);
                     }
                     EmployeeTechnology empt = new EmployeeTechnology();
@@ -113,26 +125,26 @@ public class ImplEmployee implements EmployeesService {
     @Override
     public ResponseDto<?> editRowById(EmployeeRqDto req, Integer id) {
         Optional<Employee> byId = repository.findById(id);
-        if (byId.isPresent()){
+        if (byId.isPresent()) {
             Employee employee = new Employee();
             employee.setName(req.getName());
             Optional<Department> department = departmentsRepository.findById(req.getDepartments_id());
-            if (!department.isPresent()){
-                return new ResponseDto<>(false,"data  not found id:"+req.getDepartments_id());
+            if (!department.isPresent()) {
+                return new ResponseDto<>(false, "data  not found id:" + req.getDepartments_id());
             }
             employee.setDepartment(department.get());
             employee.setId(id);
             repository.save(employee);
             try {
-                if (req.getIdsList().size()>0){
+                if (req.getIdsList().size() > 0) {
                     Integer empId = byId.get().getId();
                     employeeTechnologyRepository.deleteByEmp_id(empId);
                     List<EmployeeTechnology> et = new LinkedList<>();
-                    for (Integer techId:req.getIdsList()) {
+                    for (Integer techId : req.getIdsList()) {
                         EmployeeTechnology empt = new EmployeeTechnology();
                         empt.setEmployee(byId.get());
                         Optional<Technology> technology = technologyRepository.findById(techId);
-                        if (!technology.isPresent()){
+                        if (!technology.isPresent()) {
                             return new ResponseDto<>(false, "Data not found id:" + techId);
                         }
                         empt.setTechnology(technology.get());
@@ -140,13 +152,13 @@ public class ImplEmployee implements EmployeesService {
                     }
                     employeeTechnologyRepository.saveAll(et);
                 }
-                return new ResponseDto<>(true,"Muvaffaqiyatli tahrirlandi id:"+id);
-            } catch (Exception e){
-                log.error("Tahrirlashda xatolik "+e.getMessage());
-                return new ResponseDto<>(false,"Tahrirlashda hatolik id:"+id);
+                return new ResponseDto<>(true, "Muvaffaqiyatli tahrirlandi id:" + id);
+            } catch (Exception e) {
+                log.error("Tahrirlashda xatolik " + e.getMessage());
+                return new ResponseDto<>(false, "Tahrirlashda hatolik id:" + id);
             }
         }
-        return new ResponseDto<>(false,"Obyekt topilmadi id:"+id);
+        return new ResponseDto<>(false, "Obyekt topilmadi id:" + id);
     }
 }
 

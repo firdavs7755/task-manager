@@ -24,4 +24,7 @@ public class Technology {
     @JoinColumn(name = "technology_part_id")
     private TechnologyPart technologyPart;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "created_user_id")
+    private Users created_user;
 }

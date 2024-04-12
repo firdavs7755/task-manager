@@ -28,12 +28,13 @@ public class Users {
 
     @Column(nullable = false)
     private String username;
-    @NonNull
+
     @Column(nullable = false)
     private String password;
-    @Column(nullable = false)
 
+    @Column(nullable = false)
     private String fio;
+
     private String phone;
 
     @ManyToMany(fetch = FetchType.EAGER)

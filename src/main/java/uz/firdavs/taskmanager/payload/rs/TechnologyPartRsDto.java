@@ -10,4 +10,6 @@ import uz.firdavs.taskmanager.payload.base.BaseId;
 @Data
 public class TechnologyPartRsDto extends BaseId {
     private String name;
+    private Integer created_user_id;
+    private String created_user_fio;
 }

@@ -5,13 +5,17 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import uz.firdavs.taskmanager.payload.base.BaseId;
 
+/**
+ * Author            : Firdavsbek Maxsutaliyev
+ * Date:       4/12/2024
+ * Time:       10:27 PM
+ * Project:    task-manager
+ */
+
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class DepartmentRsDto extends BaseId {
+public class RoleRsDto extends BaseId {
     private String name;
-    private Integer director_id;
-    private String director_fio;
-    private Integer created_user_id;
-    private String created_user_fio;
 }

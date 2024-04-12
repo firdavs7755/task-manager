@@ -12,6 +12,8 @@ import java.util.List;
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE,componentModel = "spring")
 public interface DepartmentMapper extends BaseMapper<DepartmentRsDto, Department> {
     @Override
+    @Mapping(target = "created_user_id", source = "created_user.id")
+    @Mapping(target = "created_user_fio", source = "created_user.fio")
     @Mapping(target = "director_id", source = "director.id")
     @Mapping(target = "director_fio", source = "director.fio")
     public DepartmentRsDto toResponse(Department department) ;

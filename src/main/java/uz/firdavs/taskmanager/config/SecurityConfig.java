@@ -33,8 +33,10 @@ public class SecurityConfig {
 
         http
                 .authorizeRequests()
+                .antMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**").permitAll()
                 .antMatchers("/auth/one").permitAll()
                 .antMatchers("/auth/login").permitAll()
+                .antMatchers("/auth/add").permitAll()
                 .antMatchers("/auth/check").permitAll()
                 .anyRequest().authenticated();
 

@@ -1,6 +1,11 @@
 package uz.firdavs.taskmanager.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.Query;
+import uz.firdavs.taskmanager.entity.Technology;
 import uz.firdavs.taskmanager.entity.Users;
 import uz.firdavs.taskmanager.repository.base.BaseRepository;
 
@@ -17,5 +22,9 @@ public interface UsersRepository extends BaseRepository<Users,Integer> {
             value = "select a.*, u.fio as user_fio,u.username ,u.phone ,r.\"role\" as role_name from user_role a left join users u on u.id = a.user_id left join \"role\" r on r.id = a.role_id where a.user_id = :userId"
     )
     List<Map<String,Object>> selectUserRoles(Integer userId);
+
+/*    @Override
+    @EntityGraph(attributePaths = {"technologyPart"})
+    Page<Users> findAll(Specification<Users> spec, Pageable pageable);*/
 
 }

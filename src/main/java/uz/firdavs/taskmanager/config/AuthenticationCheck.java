@@ -25,7 +25,7 @@ public class AuthenticationCheck implements UserDetailsService {
         Optional<Users> byUsername = usersRepository.findByUsername(username);
         if (byUsername.isPresent()){
             Users users = byUsername.get();
-            List<SimpleGrantedAuthority> roles = users.getRoles().stream().map(role -> new SimpleGrantedAuthority(role.getRole().name())).collect(Collectors.toList());
+            List<SimpleGrantedAuthority> roles = users.getRoles().stream().map(role -> new SimpleGrantedAuthority(role.getRole())).collect(Collectors.toList());
             return
                     new UserPrincipal(
                             users.getId(),

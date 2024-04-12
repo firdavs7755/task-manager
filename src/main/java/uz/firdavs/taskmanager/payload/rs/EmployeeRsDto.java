@@ -12,5 +12,6 @@ public class EmployeeRsDto extends BaseId {
     private String name;
     private Integer department_id;
     private String department_name;
-
+    private Integer created_user_id;
+    private String created_user_fio;
 }

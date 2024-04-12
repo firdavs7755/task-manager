@@ -22,7 +22,7 @@ public class EmployeeController {
     @GetMapping
     @Operation(summary = "findAll")
     public ResponseEntity<ResponseDto<?>> findAll(@RequestParam Map<String,Object> map){
-        return ResponseEntity.ok(service.selectEmployees());
+        return ResponseEntity.ok(service.selectEmployees(map));
     }
     @GetMapping(value = "/{id}")
     @Operation(summary = "get row by id")

@@ -1,6 +1,11 @@
 package uz.firdavs.taskmanager.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.Query;
+import uz.firdavs.taskmanager.entity.Technology;
 import uz.firdavs.taskmanager.entity.TechnologyPart;
 import uz.firdavs.taskmanager.projections.ReportProjection;
 import uz.firdavs.taskmanager.repository.base.BaseRepository;
@@ -25,4 +30,9 @@ public interface TechnologyPartRepository extends BaseRepository<TechnologyPart,
                     "\t) v group by v.id ,v.technology_part_name"
     )
     List<ReportProjection> selectEmpsSectionByTechPart();
+
+    @Override
+    @EntityGraph(attributePaths = {"created_user"})
+    Page<TechnologyPart> findAll(Specification<TechnologyPart> spec, Pageable pageable);
+
 }

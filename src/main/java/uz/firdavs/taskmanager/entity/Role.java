@@ -25,7 +25,6 @@ public class Role {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "role_gen")
     private Integer id;
 
-    @Enumerated(value = EnumType.STRING)
-    private RoleNames role;
+    private String role;
 
 }

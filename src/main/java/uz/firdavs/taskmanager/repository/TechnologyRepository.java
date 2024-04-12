@@ -12,7 +12,7 @@ import uz.firdavs.taskmanager.repository.base.BaseRepository;
 public interface TechnologyRepository extends BaseRepository<Technology,Integer> {
 
     @Override
-    @EntityGraph(attributePaths = {"technologyPart"})
+    @EntityGraph(attributePaths = {"technologyPart","created_user"})
     Page<Technology> findAll(Specification<Technology> spec, Pageable pageable);
 
 

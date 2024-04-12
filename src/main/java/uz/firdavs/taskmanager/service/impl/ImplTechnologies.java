@@ -54,6 +54,7 @@ public class ImplTechnologies implements TechnologiesService {
     public ResponseDto<?> createRow(TechnologyRqDto req) {
         Technology technology = new Technology();
         technology.setName(req.getName());
+        technology.setCreated_user(Utils.getUser());
         Optional<TechnologyPart> technologyPart = technologyPartRepository.findById(req.getTechnology_part_id());
         if (!technologyPart.isPresent()){
             return new ResponseDto<>(false,"Obyekt topilmadi");

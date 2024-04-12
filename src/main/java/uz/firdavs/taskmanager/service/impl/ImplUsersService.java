@@ -3,39 +3,42 @@ package uz.firdavs.taskmanager.service.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import uz.firdavs.taskmanager.config.AuthenticationCheck;
 import uz.firdavs.taskmanager.config.JwtService;
 import uz.firdavs.taskmanager.dto.ResponseDto;
+import uz.firdavs.taskmanager.entity.Role;
 import uz.firdavs.taskmanager.entity.Token;
 import uz.firdavs.taskmanager.entity.Users;
-import uz.firdavs.taskmanager.enums.RoleNames;
-import uz.firdavs.taskmanager.payload.ReqAuth;
-import uz.firdavs.taskmanager.payload.ReqUser;
+import uz.firdavs.taskmanager.mapper.UsersMapper;
+import uz.firdavs.taskmanager.payload.rq.ReqAuth;
+import uz.firdavs.taskmanager.payload.rq.ReqUser;
+import uz.firdavs.taskmanager.payload.rs.UserPayloadDto;
 import uz.firdavs.taskmanager.repository.RoleRepository;
 import uz.firdavs.taskmanager.repository.TokenRepository;
 import uz.firdavs.taskmanager.repository.UsersRepository;
 import uz.firdavs.taskmanager.service.UsersService;
+import uz.firdavs.taskmanager.specifications.UsersSpecification;
+import uz.firdavs.taskmanager.utis.Utils;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class UsersServiceImpl implements UsersService {
+public class ImplUsersService implements UsersService {
 
      private final UsersRepository repository;
 
      private final RoleRepository roleRepository;
 
      private final TokenRepository tokenRepository;
+     private final UsersMapper mapper;
 
 
      private final JwtService jwtService;
@@ -60,7 +63,7 @@ public class UsersServiceImpl implements UsersService {
         Optional<Users> byUsername = repository.findByUsername(reqAuth.getUsername());
         if (byUsername.isPresent()) {
             if (passwordEncoder.matches(reqAuth.getPassword(),byUsername.get().getPassword()) && byUsername.get().getUsername().equals(reqAuth.getUsername())) {
-
+                tokenRepository.deleteByUserId(byUsername.get().getId());
                 String jwt = JwtService.generateToken(reqAuth);
                 Token token = new Token();
                 token.set_logged_out(false);
@@ -68,7 +71,13 @@ public class UsersServiceImpl implements UsersService {
                 token.setUser(byUsername.get());
                 tokenRepository.save(token);
                 List<Map<String,Object>> userRoles = repository.selectUserRoles(byUsername.get().getId());
-                return new ResponseDto<>(true, "ok",jwt,userRoles);
+
+                Map<String,Object> user = new HashMap<>();
+                user.put("username",byUsername.get().getUsername());
+                user.put("fio",byUsername.get().getFio());
+                user.put("id",byUsername.get().getId());
+                UserPayloadDto userPayloadDto = new UserPayloadDto(userRoles,user);
+                return new ResponseDto<>(true, "ok",jwt,userPayloadDto);
             }
             return new ResponseDto<>(false, "!!!Ops password or username wrong!");
         }
@@ -91,18 +100,19 @@ public class UsersServiceImpl implements UsersService {
 
     }
 
+    /*super admin yaratish*/
     @Override
     public ResponseDto<?> insertUser(ReqUser reqUser) {
         Optional<Users> byUsername = repository.findByUsername(reqUser.getUsername());
         if (byUsername.isPresent()) {
-            return new ResponseDto<>(false, "this user already registered");
+            return new ResponseDto<>(false, "this username already registered");
         }
         Users users = new Users();
         users.setUsername(reqUser.getUsername());
         users.setPassword(passwordEncoder.encode(reqUser.getPassword()));
         users.setFio(reqUser.getFio());
         users.setPhone(reqUser.getPhone());
-        users.setRoles(roleRepository.findAllByRole(RoleNames.ROLE_STAFF));
+        users.setRoles(roleRepository.findAll());
         try {
             Users save = repository.save(users);
             Token token = new Token();
@@ -118,26 +128,49 @@ public class UsersServiceImpl implements UsersService {
     }
 
     @Override
-    public ResponseDto<?> updateUserById(ReqUser reqUser, Integer id) {
-        Optional<Users> byId = repository.findById(id);
-        if (byId.isPresent()) {
-            Users users = new Users();
-            users.setId(id);
-            users.setUsername(reqUser.getUsername());
-            users.setPassword(reqUser.getPassword());
-            users.setPhone(reqUser.getPhone());
-            users.setFio(reqUser.getFio());
-
-            try {
-                repository.save(users);
-                return new ResponseDto<>(true, "Successfully updated id:"+ id);
-            } catch (Exception e) {
-                log.error("Exp on manupulating {}" + e.getMessage());
-                return new ResponseDto<>(false, "Exp on manupulating");
-            }
+    public ResponseDto<?> createRow(ReqUser reqUser) {
+        Optional<Users> byUsername = repository.findByUsername(reqUser.getUsername());
+        if (byUsername.isPresent()) {
+            return new ResponseDto<>(false, "this username already registered");
         }
-        return new ResponseDto<>(false, "Object not found id:" + id);
+        Users users = new Users();
+        users.setUsername(reqUser.getUsername());
+        users.setPassword(passwordEncoder.encode(reqUser.getPassword()));
+        users.setFio(reqUser.getFio());
+        users.setPhone(reqUser.getPhone());
+        List<Role> roles = roleRepository.findAllById(reqUser.getIdRoles());
+        users.setRoles(roles);
+        try {
+            repository.save(users);
+            return new ResponseDto<>(true, "Successfully");
+        } catch (Exception e) {
+            log.error("Exp on manupulating {}" + e.getMessage());
+            return new ResponseDto<>(false, "Exp on manupulating");
+        }
+    }
 
+    @Override
+    public ResponseDto<?> updateUserById(ReqUser reqUser, Integer id) {
+        Optional<Users> byUsername = repository.findById(id);
+        if (!byUsername.isPresent()) {
+            return new ResponseDto<>(false, "this username already registered");
+        }
+        Users users = new Users();
+        users.setId(id);
+        users.setUsername(reqUser.getUsername());
+        users.setFio(reqUser.getFio());
+        users.setPhone(reqUser.getPhone());
+        users.setPassword(byUsername.get().getPassword());
+        roleRepository.deleteByUserId(id);
+        List<Role> roles = roleRepository.findAllById(reqUser.getIdRoles());
+        users.setRoles(roles);
+        try {
+            repository.save(users);
+            return new ResponseDto<>(true, "Successfully");
+        } catch (Exception e) {
+            log.error("Exp on manupulating {}" + e.getMessage());
+            return new ResponseDto<>(false, "Exp on manupulating");
+        }
     }
 
     @Override
@@ -154,5 +187,22 @@ public class UsersServiceImpl implements UsersService {
         }
         return new ResponseDto<>(false, "Object not found id" + id);
 
+    }
+
+
+    @Override
+    public ResponseDto<?> findAll(Map<String, Object> map) {
+        Specification<Users> specs = UsersSpecification.filterTable(map);
+        Specification<Users> combinedSpecs = Specification.where(specs);
+        return Utils.generatePageable(repository, combinedSpecs, mapper, map);
+    }
+    @Override
+    public ResponseDto<?> getRowById(Integer id) {
+        return null;
+    }
+
+    @Override
+    public ResponseDto<?> deleteRowById(Integer id) {
+        return null;
     }
 }
