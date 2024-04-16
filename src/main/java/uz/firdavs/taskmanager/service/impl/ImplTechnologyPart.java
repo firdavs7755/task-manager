@@ -58,6 +58,7 @@ public class ImplTechnologyPart implements TechnologyPartService {
         if (rowById.isPresent()){
             TechnologyPart entity = new TechnologyPart();
             entity.setName(req.getName());
+            entity.setCreated_user(rowById.get().getCreated_user());
             entity.setId(id);
             try {
                 repository.save(entity);

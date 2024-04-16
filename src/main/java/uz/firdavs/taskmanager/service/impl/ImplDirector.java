@@ -44,6 +44,7 @@ public class ImplDirector implements DirectorService {
         if (rowById.isPresent()){
             Director entity = mapper.toEntity(req);
             entity.setId(id);
+            entity.setCreated_user(rowById.get().getCreated_user());
             try {
                 repository.save(entity);
                 return new ResponseDto<>(true,"Muvaffaqiyatli tahrirlandi id:"+id);

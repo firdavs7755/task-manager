@@ -22,6 +22,10 @@ public class Employee {
     private Department department;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "wish_id")
+    private Wish wish;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_user_id")
     private Users created_user;
 

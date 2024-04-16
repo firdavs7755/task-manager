@@ -5,17 +5,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import uz.firdavs.taskmanager.dto.ResponseDto;
-import uz.firdavs.taskmanager.entity.Department;
-import uz.firdavs.taskmanager.entity.Employee;
-import uz.firdavs.taskmanager.entity.EmployeeTechnology;
-import uz.firdavs.taskmanager.entity.Technology;
+import uz.firdavs.taskmanager.entity.*;
 import uz.firdavs.taskmanager.mapper.EmployeeMapper;
 import uz.firdavs.taskmanager.payload.rq.EmployeeRqDto;
 import uz.firdavs.taskmanager.projections.EmployeesProjection;
-import uz.firdavs.taskmanager.repository.DepartmentsRepository;
-import uz.firdavs.taskmanager.repository.EmployeeRepository;
-import uz.firdavs.taskmanager.repository.EmployeeTechnologyRepository;
-import uz.firdavs.taskmanager.repository.TechnologyRepository;
+import uz.firdavs.taskmanager.repository.*;
 import uz.firdavs.taskmanager.service.EmployeesService;
 import uz.firdavs.taskmanager.specifications.EmployeeSpecification;
 import uz.firdavs.taskmanager.utis.Utils;
@@ -38,6 +32,7 @@ public class ImplEmployee implements EmployeesService {
     private final EmployeeRepository repository;
     private final TechnologyRepository technologyRepository;
     private final DepartmentsRepository departmentsRepository;
+    private final WishRepository wishRepository;
     private final EmployeeMapper mapper;
     private final EmployeeTechnologyRepository employeeTechnologyRepository;
 
@@ -89,6 +84,11 @@ public class ImplEmployee implements EmployeesService {
     public ResponseDto<?> createRow(EmployeeRqDto req) {
         Employee emp = new Employee();
         emp.setName(req.getName());
+        Optional<Wish> wishOptional = wishRepository.findById(req.getWish_id());
+        if (!wishOptional.isPresent()){
+            return new ResponseDto<>(false, "Wish not found id:" + req.getWish_id());
+        }
+        emp.setWish(wishOptional.get());
         emp.setCreated_user(Utils.getUser());
         Optional<Department> department = departmentsRepository.findById(req.getDepartments_id());
         if (!department.isPresent()) {
@@ -126,15 +126,22 @@ public class ImplEmployee implements EmployeesService {
     public ResponseDto<?> editRowById(EmployeeRqDto req, Integer id) {
         Optional<Employee> byId = repository.findById(id);
         if (byId.isPresent()) {
-            Employee employee = new Employee();
-            employee.setName(req.getName());
+            Employee entity = new Employee();
+            entity.setName(req.getName());
+            entity.setCreated_user(byId.get().getCreated_user());
+
+            Optional<Wish> wishOptional = wishRepository.findById(req.getWish_id());
+            if (!wishOptional.isPresent()){
+                return new ResponseDto<>(false, "Wish not found id:" + req.getWish_id());
+            }
+            entity.setWish(wishOptional.get());
             Optional<Department> department = departmentsRepository.findById(req.getDepartments_id());
             if (!department.isPresent()) {
                 return new ResponseDto<>(false, "data  not found id:" + req.getDepartments_id());
             }
-            employee.setDepartment(department.get());
-            employee.setId(id);
-            repository.save(employee);
+            entity.setDepartment(department.get());
+            entity.setId(id);
+            repository.save(entity);
             try {
                 if (req.getIdsList().size() > 0) {
                     Integer empId = byId.get().getId();

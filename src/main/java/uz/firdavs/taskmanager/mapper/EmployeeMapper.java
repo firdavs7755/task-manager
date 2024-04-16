@@ -16,6 +16,8 @@ public interface EmployeeMapper extends BaseMapper<EmployeeRsDto, Employee> {
     @Mapping(target = "created_user_fio", source = "created_user.fio")
     @Mapping(target = "department_id", source = "department.id")
     @Mapping(target = "department_name", source = "department.name")
+    @Mapping(target = "wish_id", source = "wish.id")
+    @Mapping(target = "wish_name", source = "wish.name")
     public EmployeeRsDto toResponse(Employee employee) ;
 
     @Override

@@ -81,6 +81,7 @@ public class ImplTechnologies implements TechnologiesService {
         if (byId.isPresent()){
             Technology technology = new Technology();
             technology.setName(req.getName());
+            technology.setCreated_user(byId.get().getCreated_user());
             Optional<TechnologyPart> technologyPart = technologyPartRepository.findById(req.getTechnology_part_id());
             if (!technologyPart.isPresent()){
                 return new ResponseDto<>(false,"Obyekt topilmadi");

@@ -46,6 +46,24 @@ public class Utils {
         log.error("err. Данные недоступны ! cnt:"+all.getContent().size());
         return new ResponseDto<>(false,"Данные недоступны !",new ArrayList<>());
     }
+    public static <T,Dto> ResponseDto<?> generatePageable(BaseRepository<T, ?> repository, BaseMapper<Dto,T> mapper,Map<String,Object> map) {
+        Pageable pageable = generatePageable(map);
+        Page<T> all = repository.findAll(pageable);
+        if (!all.isEmpty()){
+            return new ResponseDto<>(
+                    true,
+                    "Данные доступны !",
+                    mapper.toResponseList(all.getContent()),
+                    all.getSize(),
+                    all.getTotalPages(),
+                    all.getTotalElements(),
+                    all.getNumber(),
+                    all.getSize()
+            );
+        }
+        log.error("err. Данные недоступны ! cnt:"+all.getContent().size());
+        return new ResponseDto<>(false,"Данные недоступны !",new ArrayList<>());
+    }
 
     public static <T,Dto> ResponseDto<?> generatePageable(BaseRepository<T, ?> repository,  BaseMapper<Dto,T> mapper) {
         List<T> all = repository.findAll();

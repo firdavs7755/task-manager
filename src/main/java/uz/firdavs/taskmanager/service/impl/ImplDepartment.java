@@ -88,6 +88,7 @@ public class ImplDepartment implements DepartmentsService {
         entity.setId(id);
         entity.setName(req.getName());
         entity.setDirector(director.get());
+        entity.setCreated_user(rowById.get().getCreated_user());
         try {
             repository.save(entity);
             return new ResponseDto<>(true, "Success created ");
