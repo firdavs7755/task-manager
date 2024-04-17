@@ -17,4 +17,6 @@ public interface EmployeesProjection {
 //    @Type(type = "jsonbType")
     String getSkills();
     String getSkillsId();
+    String getProjects();
+    String getProjects_id();
 }

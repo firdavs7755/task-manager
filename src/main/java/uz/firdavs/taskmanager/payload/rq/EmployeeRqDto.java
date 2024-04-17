@@ -20,5 +20,6 @@ public class EmployeeRqDto{
     private Integer departments_id;
     private Integer wish_id;
     private List<Integer> idsList;
+    private List<Integer> idProjects;
 
 }

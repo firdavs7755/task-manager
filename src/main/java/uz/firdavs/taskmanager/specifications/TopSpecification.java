@@ -17,7 +17,7 @@ public class TopSpecification {
                 predicates.add(criteriaBuilder.equal(root.get("id"),map.get("id")));
             }
             if (map.get("name")!=null){
-                predicates.add(criteriaBuilder.like((root.get("name")),"%"+map.get("name")+"%"));
+                predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("name")),"%"+map.get("name")+"%") );
             }
             if (map.get("description")!=null){
                 predicates.add(criteriaBuilder.like((root.get("description")),"%"+map.get("description")+"%"));

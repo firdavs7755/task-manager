@@ -168,6 +168,11 @@ public class ImplUsersService implements UsersService {
         if (!byUsername.isPresent()) {
             return new ResponseDto<>(false, "this username already registered");
         }
+
+        Optional<Employee> bySameUserId = employeeRepository.findBySameUserId(byUsername.get().getId());
+        bySameUserId.get().setName(reqUser.getFio());
+        employeeRepository.save(bySameUserId.get());
+
         Users users = new Users();
         users.setId(id);
         users.setUsername(reqUser.getUsername());

@@ -14,7 +14,9 @@ import uz.firdavs.taskmanager.service.EmployeesService;
 import uz.firdavs.taskmanager.specifications.EmployeeSpecification;
 import uz.firdavs.taskmanager.utis.Utils;
 
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 /**
  * created by: Firdavsbek
@@ -31,10 +33,13 @@ public class ImplEmployee implements EmployeesService {
 
     private final EmployeeRepository repository;
     private final TechnologyRepository technologyRepository;
+    private final ProjectRepository projectRepository;
     private final DepartmentsRepository departmentsRepository;
     private final WishRepository wishRepository;
+    private final UsersRepository usersRepository;
     private final EmployeeMapper mapper;
     private final EmployeeTechnologyRepository employeeTechnologyRepository;
+    private final EmployeeProjectRepository employeeProjectRepository;
 
     @Override
     public ResponseDto<?> findAll(Map<String, Object> map) {
@@ -154,19 +159,38 @@ public class ImplEmployee implements EmployeesService {
             }
             entity.setDepartment(department.get());
             entity.setId(id);
-            repository.save(entity);
             try {
+                repository.save(entity);
+                Optional<Users> user = usersRepository.findById(byId.get().getSame_user().getId());
+                user.get().setFio(req.getName());
+                usersRepository.save(user.get());
+                Integer empId = byId.get().getId();
+
+                employeeProjectRepository.deleteByEmpId(empId);
+                if (req.getIdProjects().size()>0){
+                    List<EmployeeProject> ep = new LinkedList<>();
+                    for (Integer projectId:req.getIdProjects()) {
+                        Optional<Project> project = projectRepository.findById(projectId);
+                        if (!project.isPresent()){
+                            return new ResponseDto<>(false, "Data not found id:" + projectId);
+                        }
+                        EmployeeProject ept = new EmployeeProject();
+                        ept.setProject(project.get());
+                        ept.setEmployee(byId.get());
+                        ep.add(ept);
+                    }
+                    employeeProjectRepository.saveAll(ep);
+                }
                 if (req.getIdsList().size() > 0) {
-                    Integer empId = byId.get().getId();
                     employeeTechnologyRepository.deleteByEmp_id(empId);
                     List<EmployeeTechnology> et = new LinkedList<>();
                     for (Integer techId : req.getIdsList()) {
                         EmployeeTechnology empt = new EmployeeTechnology();
-                        empt.setEmployee(byId.get());
                         Optional<Technology> technology = technologyRepository.findById(techId);
                         if (!technology.isPresent()) {
                             return new ResponseDto<>(false, "Data not found id:" + techId);
                         }
+                        empt.setEmployee(byId.get());
                         empt.setTechnology(technology.get());
                         et.add(empt);
                     }
