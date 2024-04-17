@@ -64,14 +64,27 @@ public class ImplEmployee implements EmployeesService {
     public ResponseDto<?> selectEmployees(Map<String, Object> map) {
         System.out.println("MAP:" + map);
         List<EmployeesProjection> employeesProjections = new ArrayList<>();
+        String empName="";
+        String technologyName="";
+        String technology_part_id="";
+        if (map.get("empName")!=null){
+            empName = Utils.checkStringValIsNull((String) map.get("empName"));
+        }
+        if (map.get("technologyName")!=null){
+            technologyName = Utils.checkStringValIsNull((String) map.get("technologyName"));
+        }
+        if (map.get("technology_part_id")!=null){
+            technology_part_id = Utils.checkIntValIsNull (Integer.parseInt((String) map.get("technology_part_id")));
+        }
+        System.out.println("name:"+empName+", tech_part_id:"+technology_part_id+", technologyName:"+technologyName);
         if (map.get("id") != null) {
             Integer id = Integer.parseInt(map.get("id").toString());
-            employeesProjections = repository.selectEmployees(id);
+            employeesProjections = repository.selectEmployees(id,empName,technology_part_id);
             if (employeesProjections.size() > 0) {
                 return new ResponseDto<>(true, "OK", employeesProjections);
             }
         } else {
-            employeesProjections = repository.selectEmployees();
+            employeesProjections = repository.selectEmployees(empName,technology_part_id,technologyName);
             if (employeesProjections.size() > 0) {
                 return new ResponseDto<>(true, "OK", employeesProjections);
             }
@@ -129,7 +142,7 @@ public class ImplEmployee implements EmployeesService {
             Employee entity = new Employee();
             entity.setName(req.getName());
             entity.setCreated_user(byId.get().getCreated_user());
-
+            entity.setSame_user(byId.get().getSame_user());
             Optional<Wish> wishOptional = wishRepository.findById(req.getWish_id());
             if (!wishOptional.isPresent()){
                 return new ResponseDto<>(false, "Wish not found id:" + req.getWish_id());

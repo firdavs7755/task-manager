@@ -13,11 +13,9 @@ import uz.firdavs.taskmanager.entity.Users;
 import uz.firdavs.taskmanager.mapper.base.BaseMapper;
 import uz.firdavs.taskmanager.repository.base.BaseRepository;
 
-import javax.swing.text.StyleContext;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * created by: Firdavsbek
@@ -102,6 +100,15 @@ public class Utils {
     public static UserPrincipal getPrincipal(){
         UserPrincipal principal = (UserPrincipal)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return principal;
+    }
+
+    public static String checkIntValIsNull(Integer param){
+        if (param==null) return "";
+        else return ""+param;
+    }
+    public static String checkStringValIsNull(String param){
+        if (param==null) return "";
+        else return param;
     }
 
 }

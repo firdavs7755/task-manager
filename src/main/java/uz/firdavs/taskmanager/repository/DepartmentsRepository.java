@@ -23,7 +23,8 @@ public interface DepartmentsRepository extends BaseRepository<Department,Integer
                 "\t\tCOALESCE(dev.front_cnt,0) as front_cnt,\n" +
                 "        COALESCE(dev.back_cnt,0) as back_cnt,\n" +
                 "        dev.wants_new_project,\n" +
-                "        dev.no_wants_new_project\n" +
+                "        dev.no_wants_new_project,\n" +
+                "        dev.no_marked_wants_new_project\n" +
                 "        from department d \n" +
                 "        left join (\n" +
                 "\t        select\n" +
@@ -37,7 +38,8 @@ public interface DepartmentsRepository extends BaseRepository<Department,Integer
                 "\t\t\t\t\tsum(etp_f.front_cnt) as front_cnt,\n" +
                 "\t\t\t\t\tsum(etp_f.back_cnt) as back_cnt,\n" +
                 "\t\t\t\t\tsum(case when e.wish_id = 1 then 1 else 0 end ) as wants_new_project,\n" +
-                "\t\t\t\t\tsum(case when e.wish_id = 2 then 1 else 0 end ) as no_wants_new_project\n" +
+                "\t\t\t\t\tsum(case when e.wish_id = 2 then 1 else 0 end ) as no_wants_new_project,\n" +
+                "\t\t\t\t\tsum(case when e.wish_id = 3 then 1 else 0 end ) as no_marked_wants_new_project\n" +
                 "\t\t\t\t\tfrom department d \n" +
                 "\t\t\t\t\tleft join employee e on e.department_id = d.id \n" +
                 "\t\t\t\t\tleft join (\n" +

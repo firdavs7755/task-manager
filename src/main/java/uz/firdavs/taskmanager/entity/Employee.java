@@ -4,12 +4,14 @@ package uz.firdavs.taskmanager.entity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.*;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@ToString
 @Entity(name = "employee")
 public class Employee {
     @Id
@@ -28,5 +30,9 @@ public class Employee {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_user_id")
     private Users created_user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "same_user_id")
+    private Users same_user;
 
 }

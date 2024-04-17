@@ -9,6 +9,7 @@ public interface ReportProjection {
     Integer getBack_cnt();
     Integer getWants_new_project();
     Integer getNo_wants_new_project();
+    Integer getNo_marked_wants_new_project();
 
 
 

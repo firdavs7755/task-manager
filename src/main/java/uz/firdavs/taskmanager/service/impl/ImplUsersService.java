@@ -10,16 +10,12 @@ import org.springframework.stereotype.Service;
 import uz.firdavs.taskmanager.config.AuthenticationCheck;
 import uz.firdavs.taskmanager.config.JwtService;
 import uz.firdavs.taskmanager.dto.ResponseDto;
-import uz.firdavs.taskmanager.entity.Role;
-import uz.firdavs.taskmanager.entity.Token;
-import uz.firdavs.taskmanager.entity.Users;
+import uz.firdavs.taskmanager.entity.*;
 import uz.firdavs.taskmanager.mapper.UsersMapper;
 import uz.firdavs.taskmanager.payload.rq.ReqAuth;
 import uz.firdavs.taskmanager.payload.rq.ReqUser;
 import uz.firdavs.taskmanager.payload.rs.UserPayloadDto;
-import uz.firdavs.taskmanager.repository.RoleRepository;
-import uz.firdavs.taskmanager.repository.TokenRepository;
-import uz.firdavs.taskmanager.repository.UsersRepository;
+import uz.firdavs.taskmanager.repository.*;
 import uz.firdavs.taskmanager.service.UsersService;
 import uz.firdavs.taskmanager.specifications.UsersSpecification;
 import uz.firdavs.taskmanager.utis.Utils;
@@ -36,6 +32,8 @@ public class ImplUsersService implements UsersService {
      private final UsersRepository repository;
 
      private final RoleRepository roleRepository;
+     private final EmployeeRepository employeeRepository;
+     private final WishRepository wishRepository;
 
      private final TokenRepository tokenRepository;
      private final UsersMapper mapper;
@@ -114,13 +112,21 @@ public class ImplUsersService implements UsersService {
         users.setPhone(reqUser.getPhone());
         users.setRoles(roleRepository.findAll());
         try {
-            Users save = repository.save(users);
-            Token token = new Token();
+            Users saved = repository.save(users);
+            Employee employee = new Employee();
+            employee.setName(reqUser.getFio());
+            employee.setCreated_user(Utils.getUser());
+            employee.setSame_user(saved);
+            Optional<Wish> wish_3 = wishRepository.findById(3);
+            employee.setWish(wish_3.get());
+            System.out.println("ssss:"+employee.toString());
+            employeeRepository.save(employee);
+/*            Token token = new Token();
             token.setToken(jwtService.generateTokenn(new ReqAuth(save.getUsername(), null)));
             token.setUser(save);
             token.set_logged_out(false);
-            tokenRepository.save(token);
-            return new ResponseDto<>(true, "Successfully", save);
+            tokenRepository.save(token);*/
+            return new ResponseDto<>(true, "Successfully");
         } catch (Exception e) {
             log.error("Exp on manupulating {}" + e.getMessage());
             return new ResponseDto<>(false, "Exp on manupulating");
@@ -141,7 +147,14 @@ public class ImplUsersService implements UsersService {
         List<Role> roles = roleRepository.findAllById(reqUser.getIdRoles());
         users.setRoles(roles);
         try {
-            repository.save(users);
+            Users saved = repository.save(users);
+            Employee employee = new Employee();
+            employee.setName(reqUser.getFio());
+            employee.setCreated_user(Utils.getUser());
+            employee.setSame_user(saved);
+            Optional<Wish> wish_3 = wishRepository.findById(3);
+            employee.setWish(wish_3.get());
+            employeeRepository.save(employee);
             return new ResponseDto<>(true, "Successfully");
         } catch (Exception e) {
             log.error("Exp on manupulating {}" + e.getMessage());

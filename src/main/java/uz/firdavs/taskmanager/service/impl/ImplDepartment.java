@@ -80,14 +80,17 @@ public class ImplDepartment implements DepartmentsService {
         if (!rowById.isPresent()){
             return new ResponseDto<>(false, "Data not found row id:" + id);
         }
-        Optional<Director> director = directorRepository.findById(req.getDirector_id());
-        if (!director.isPresent()) {
-            return new ResponseDto<>(false, "Data not found id:" + req.getDirector_id());
-        }
         Department entity = new Department();
+        if (req.getDirector_id()!=null){
+            Optional<Director> director = directorRepository.findById(req.getDirector_id());
+            if (!director.isPresent()) {
+                return new ResponseDto<>(false, "Data not found id:" + req.getDirector_id());
+            }
+            entity.setDirector(director.get());
+        }
         entity.setId(id);
+        entity.setDirector(null);
         entity.setName(req.getName());
-        entity.setDirector(director.get());
         entity.setCreated_user(rowById.get().getCreated_user());
         try {
             repository.save(entity);
