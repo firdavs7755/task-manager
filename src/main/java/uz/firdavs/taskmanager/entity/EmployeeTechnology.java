@@ -24,4 +24,8 @@ public class EmployeeTechnology {
     @JoinColumn(name = "technology_id")
     private Technology technology;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "grade_id")
+    private TechnologyGrade grade;
+
 }

@@ -23,4 +23,9 @@ public interface EmployeeTechnologyRepository extends BaseRepository<EmployeeTec
     @Query(value="DELETE FROM employee_technology WHERE employee_id = ?1", nativeQuery=true)
     int deleteByEmp_id(Integer empId);
 
+    @Modifying
+    @Transactional
+    @Query(value="update employee_technology set grade_id= ?1 WHERE employee_id = ?2 and technology_id= ?3", nativeQuery=true)
+    int markTechGrades(Integer grade_id,Integer employee_id,Integer technology_id);
+
 }

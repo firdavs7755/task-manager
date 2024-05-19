@@ -44,6 +44,12 @@ public class Utils {
         log.error("err. Данные недоступны ! cnt:"+all.getContent().size());
         return new ResponseDto<>(false,"Данные недоступны !",new ArrayList<>());
     }
+    public static Sort orderByIdDesc(){
+        return Sort.by(Sort.Direction.DESC, "id");
+    }
+    public static Sort orderById(){
+        return Sort.by(Sort.Direction.ASC, "id");
+    }
     public static <T,Dto> ResponseDto<?> generatePageable(BaseRepository<T, ?> repository, BaseMapper<Dto,T> mapper,Map<String,Object> map) {
         Pageable pageable = generatePageable(map);
         Page<T> all = repository.findAll(pageable);

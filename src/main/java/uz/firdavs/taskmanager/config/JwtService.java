@@ -13,7 +13,7 @@ import java.util.Date;
 public class JwtService {
 
     private static String secretKey="fir4gb56w4rbn6bhr46b41t6g4w3e5423t4ghtdavsokam354ax57545844w2d4qsutaliyev";
-    private static Integer jwtExpDate=864000;
+    private static Integer jwtExpDate=8640000;
     public static void main(String[] args) {
         System.out.println(generateToken(new ReqAuth("111","444")));
     }

@@ -19,4 +19,6 @@ public interface EmployeesProjection {
     String getSkillsId();
     String getProjects();
     String getProjects_id();
+    String getGrades();
+    String getGrade_ids();
 }

@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uz.firdavs.taskmanager.dto.ResponseDto;
 import uz.firdavs.taskmanager.payload.rq.EmployeeRqDto;
+import uz.firdavs.taskmanager.payload.rq.TechGradeRqDto;
 import uz.firdavs.taskmanager.service.EmployeesService;
 
 import javax.transaction.Transactional;
@@ -38,6 +39,11 @@ public class EmployeeController {
     @Operation(summary = "edit row by id")
     public ResponseEntity<ResponseDto<?>> editRowById(@RequestBody EmployeeRqDto employeeRqDto, @PathVariable Integer id){
         return ResponseEntity.ok(service.editRowById(employeeRqDto,id));
+    }
+    @PutMapping(value = "/mark")
+    @Operation(summary = "Remark technologies")
+    public ResponseEntity<ResponseDto<?>> markTechGrades(@RequestBody TechGradeRqDto req){
+        return ResponseEntity.ok(service.markTechGrades(req));
     }
     @Transactional
     @DeleteMapping(value = "/{id}")

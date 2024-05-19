@@ -8,6 +8,8 @@ import uz.firdavs.taskmanager.dto.ResponseDto;
 import uz.firdavs.taskmanager.entity.*;
 import uz.firdavs.taskmanager.mapper.EmployeeMapper;
 import uz.firdavs.taskmanager.payload.rq.EmployeeRqDto;
+import uz.firdavs.taskmanager.payload.rq.TechGrade;
+import uz.firdavs.taskmanager.payload.rq.TechGradeRqDto;
 import uz.firdavs.taskmanager.projections.EmployeesProjection;
 import uz.firdavs.taskmanager.repository.*;
 import uz.firdavs.taskmanager.service.EmployeesService;
@@ -39,6 +41,7 @@ public class ImplEmployee implements EmployeesService {
     private final UsersRepository usersRepository;
     private final EmployeeMapper mapper;
     private final EmployeeTechnologyRepository employeeTechnologyRepository;
+    private final TechnologyGradeRepository gradeRepository;
     private final EmployeeProjectRepository employeeProjectRepository;
 
     @Override
@@ -72,6 +75,10 @@ public class ImplEmployee implements EmployeesService {
         String empName="";
         String technologyName="";
         String technology_part_id="";
+        String grade_id="";
+        String wish_id="";
+        String id_techs=null;
+        String id_projects=null;
         if (map.get("empName")!=null){
             empName = Utils.checkStringValIsNull((String) map.get("empName"));
         }
@@ -81,17 +88,81 @@ public class ImplEmployee implements EmployeesService {
         if (map.get("technology_part_id")!=null){
             technology_part_id = Utils.checkIntValIsNull (Integer.parseInt((String) map.get("technology_part_id")));
         }
-        System.out.println("name:"+empName+", tech_part_id:"+technology_part_id+", technologyName:"+technologyName);
+        if (map.get("grade_id")!=null){
+            grade_id = Utils.checkIntValIsNull (Integer.parseInt((String) map.get("grade_id")));
+        }
+        if (map.get("wish_id")!=null){
+            wish_id = Utils.checkIntValIsNull (Integer.parseInt((String) map.get("wish_id")));
+        }
+        if (map.get("id_techs")!=null){
+            id_techs = (String) map.get("id_techs");
+        }
+        if (map.get("id_projs")!=null){
+            id_projects = (String) map.get("id_projs");
+        }
+        System.out.println("LIST:"+id_techs);
+        System.out.println("name:"+empName+", tech_part_id:"+technology_part_id+", technologyName:"+technologyName+", wish_id:"+wish_id);
         if (map.get("id") != null) {
             Integer id = Integer.parseInt(map.get("id").toString());
-            employeesProjections = repository.selectEmployees(id,empName,technology_part_id);
+            employeesProjections = repository.selectEmployees(id,empName,technology_part_id,grade_id);
             if (employeesProjections.size() > 0) {
                 return new ResponseDto<>(true, "OK", employeesProjections);
+        }
+    } else {
+            if (id_techs==null && id_projects==null){
+                employeesProjections = repository.selectEmployees(empName,technology_part_id,technologyName,wish_id,grade_id);
+                if (employeesProjections.size() > 0) {
+                    return new ResponseDto<>(true, "OK", employeesProjections);
+                }
+            } else if (id_techs!=null && id_projects==null) {
+//                texnologiyalar buyicha multiSelect li filtr
+                String[] stringArray = id_techs.split(",");
+
+                // Step 2: Convert each string in the array to an integer and add to a list
+                List<Integer> intList = new ArrayList<>();
+                for (String s : stringArray) {
+                    intList.add(Integer.parseInt(s));
+                }
+
+                employeesProjections = repository.selectEmployees(empName,technology_part_id,technologyName,wish_id,intList,grade_id);
+                if (employeesProjections.size() > 0) {
+                    return new ResponseDto<>(true, "OK", employeesProjections);
+                }
             }
-        } else {
-            employeesProjections = repository.selectEmployees(empName,technology_part_id,technologyName);
-            if (employeesProjections.size() > 0) {
-                return new ResponseDto<>(true, "OK", employeesProjections);
+            else if (id_techs==null && id_projects!=null) {
+//                texnologiyalar buyicha multiSelect li filtr
+                String[] stringArray = id_projects.split(",");
+
+                // Step 2: Convert each string in the array to an integer and add to a list
+                List<Integer> projs = new ArrayList<>();
+                for (String s : stringArray) {
+                    projs.add(Integer.parseInt(s));
+                }
+
+                employeesProjections = repository.selectEmployeesMs2(empName,technology_part_id,technologyName,wish_id,projs,grade_id);
+                if (employeesProjections.size() > 0) {
+                    return new ResponseDto<>(true, "OK", employeesProjections);
+                }
+            } else {
+                String[] stringArray = id_projects.split(",");
+
+                // Step 2: Convert each string in the array to an integer and add to a list
+                List<Integer> projs = new ArrayList<>();
+                for (String s : stringArray) {
+                    projs.add(Integer.parseInt(s));
+                }
+                String[] stringArray2 = id_techs.split(",");
+
+                // Step 2: Convert each string in the array to an integer and add to a list
+                List<Integer> intList = new ArrayList<>();
+                for (String s : stringArray) {
+                    intList.add(Integer.parseInt(s));
+                }
+
+                employeesProjections = repository.selectEmployeesMs3(empName,technology_part_id,technologyName,wish_id,projs,intList,grade_id);
+                if (employeesProjections.size() > 0) {
+                    return new ResponseDto<>(true, "OK", employeesProjections);
+                }
             }
         }
 
@@ -182,6 +253,7 @@ public class ImplEmployee implements EmployeesService {
                     employeeProjectRepository.saveAll(ep);
                 }
                 if (req.getIdsList().size() > 0) {
+                    Optional<TechnologyGrade> notSpecified = gradeRepository.findById(4);
                     employeeTechnologyRepository.deleteByEmp_id(empId);
                     List<EmployeeTechnology> et = new LinkedList<>();
                     for (Integer techId : req.getIdsList()) {
@@ -192,6 +264,7 @@ public class ImplEmployee implements EmployeesService {
                         }
                         empt.setEmployee(byId.get());
                         empt.setTechnology(technology.get());
+                        empt.setGrade(notSpecified.get());
                         et.add(empt);
                     }
                     employeeTechnologyRepository.saveAll(et);
@@ -203,6 +276,22 @@ public class ImplEmployee implements EmployeesService {
             }
         }
         return new ResponseDto<>(false, "Obyekt topilmadi id:" + id);
+    }
+
+    @Override
+    public ResponseDto<?> markTechGrades(TechGradeRqDto req) {
+        Optional<Employee> byId = repository.findById(req.getEmployee_id());
+        if (byId.isPresent()){
+            if(req.getList().size()>0){
+                for (TechGrade item:req.getList()) {
+                    employeeTechnologyRepository.markTechGrades(item.getGrade_id(), req.getEmployee_id(), item.getTech_id());
+                }
+            } else {
+                return new ResponseDto<>(false,"Gradesc not selected!");}
+        } else {
+            return new ResponseDto<>(false, "Obyekt topilmadi id:" + req.getEmployee_id());
+        }
+        return new ResponseDto<>(true,"Success");
     }
 }
 
