@@ -17,6 +17,7 @@ public class ReqUser {
     private String password;
     private String fio;
     private String phone;
+    private Integer employee_type_id;
 
     private List<Integer> idRoles;
 

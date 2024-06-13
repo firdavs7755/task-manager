@@ -27,7 +27,7 @@ public interface TechnologyPartRepository extends BaseRepository<TechnologyPart,
                     "\tleft join technology t on t.id = et.technology_id\n" +
                     "\tleft join technology_part tp on tp.id = t.technology_part_id \n" +
                     "\tgroup by a.id ,a.\"name\" ,tp.\"name\",tp.id\n" +
-                    "\t) v group by v.id ,v.technology_part_name"
+                    "\t) v group by v.id ,v.technology_part_name  having v.id is not null "
     )
     List<ReportProjection> selectEmpsSectionByTechPart();
 

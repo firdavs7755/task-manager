@@ -30,6 +30,11 @@ public class ImplTop implements TopService {
 
 
     @Override
+    public ResponseDto<?> selectTopLike() {
+        return new ResponseDto<>(true,"Ok",repository.selectTopLike());
+    }
+
+    @Override
     public ResponseDto<?> createRow(TopRqDto req) {
         Top entity = new Top();
         entity.setName(req.getName());

@@ -23,7 +23,7 @@ public class TopLike {
     private Top top;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private Users user;
+    @JoinColumn(name = "employee_id")
+    private Employee employee;
 
 }

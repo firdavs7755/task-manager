@@ -34,6 +34,7 @@ public class ImplUsersService implements UsersService {
      private final RoleRepository roleRepository;
      private final EmployeeRepository employeeRepository;
      private final WishRepository wishRepository;
+     private final EmployeeTypeRepository employeeTypeRepository;
 
      private final TokenRepository tokenRepository;
      private final UsersMapper mapper;
@@ -71,6 +72,14 @@ public class ImplUsersService implements UsersService {
                 List<Map<String,Object>> userRoles = repository.selectUserRoles(byUsername.get().getId());
 
                 Map<String,Object> user = new HashMap<>();
+                Optional<Employee> employee = employeeRepository.findBySameUserId(byUsername.get().getId());
+                Integer employee_id = null;
+                if (employee.isPresent()){
+                    user.put("employee_id",employee.get().getId());
+                } else {
+                    user.put("employee_id",employee_id);
+                }
+
                 user.put("username",byUsername.get().getUsername());
                 user.put("fio",byUsername.get().getFio());
                 user.put("id",byUsername.get().getId());
@@ -154,6 +163,11 @@ public class ImplUsersService implements UsersService {
             employee.setSame_user(saved);
             Optional<Wish> wish_3 = wishRepository.findById(3);
             employee.setWish(wish_3.get());
+            Optional<EmployeeType> employeeType = employeeTypeRepository.findById(reqUser.getEmployee_type_id());
+            if (!employeeType.isPresent()){
+                return new ResponseDto<>(false,"Employe type topilmadi");
+            }
+            employee.setEmployeeType(employeeType.get());
             employeeRepository.save(employee);
             return new ResponseDto<>(true, "Successfully");
         } catch (Exception e) {
@@ -168,9 +182,13 @@ public class ImplUsersService implements UsersService {
         if (!byUsername.isPresent()) {
             return new ResponseDto<>(false, "this username already registered");
         }
-
         Optional<Employee> bySameUserId = employeeRepository.findBySameUserId(byUsername.get().getId());
         bySameUserId.get().setName(reqUser.getFio());
+        Optional<EmployeeType> employeeType = employeeTypeRepository.findById(reqUser.getEmployee_type_id());
+        if (!employeeType.isPresent()){
+            return new ResponseDto<>(false,"Employe type topilmadi");
+        }
+        bySameUserId.get().setEmployeeType(employeeType.get());
         employeeRepository.save(bySameUserId.get());
 
         Users users = new Users();

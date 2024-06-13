@@ -35,4 +35,8 @@ public class Employee {
     @JoinColumn(name = "same_user_id")
     private Users same_user;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "employee_type_id")
+    private EmployeeType employeeType;
+
 }

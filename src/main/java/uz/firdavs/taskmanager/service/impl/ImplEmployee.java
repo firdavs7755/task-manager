@@ -72,49 +72,53 @@ public class ImplEmployee implements EmployeesService {
     public ResponseDto<?> selectEmployees(Map<String, Object> map) {
         System.out.println("MAP:" + map);
         List<EmployeesProjection> employeesProjections = new ArrayList<>();
-        String empName="";
-        String technologyName="";
-        String technology_part_id="";
-        String grade_id="";
-        String wish_id="";
-        String id_techs=null;
-        String id_projects=null;
-        if (map.get("empName")!=null){
+        String empName = "";
+        String technologyName = "";
+        String technology_part_id = "";
+        String grade_id = "";
+        String employee_type_id = "";
+        String wish_id = "";
+        String id_techs = null;
+        String id_projects = null;
+        if (map.get("empName") != null) {
             empName = Utils.checkStringValIsNull((String) map.get("empName"));
         }
-        if (map.get("technologyName")!=null){
+        if (map.get("technologyName") != null) {
             technologyName = Utils.checkStringValIsNull((String) map.get("technologyName"));
         }
-        if (map.get("technology_part_id")!=null){
-            technology_part_id = Utils.checkIntValIsNull (Integer.parseInt((String) map.get("technology_part_id")));
+        if (map.get("technology_part_id") != null) {
+            technology_part_id = Utils.checkIntValIsNull(Integer.parseInt((String) map.get("technology_part_id")));
         }
-        if (map.get("grade_id")!=null){
-            grade_id = Utils.checkIntValIsNull (Integer.parseInt((String) map.get("grade_id")));
+        if (map.get("grade_id") != null) {
+            grade_id = Utils.checkIntValIsNull(Integer.parseInt((String) map.get("grade_id")));
         }
-        if (map.get("wish_id")!=null){
-            wish_id = Utils.checkIntValIsNull (Integer.parseInt((String) map.get("wish_id")));
+        if (map.get("employee_type_id") != null) {
+            employee_type_id = Utils.checkIntValIsNull(Integer.parseInt((String) map.get("employee_type_id")));
         }
-        if (map.get("id_techs")!=null){
+        if (map.get("wish_id") != null) {
+            wish_id = Utils.checkIntValIsNull(Integer.parseInt((String) map.get("wish_id")));
+        }
+        if (map.get("id_techs") != null) {
             id_techs = (String) map.get("id_techs");
         }
-        if (map.get("id_projs")!=null){
+        if (map.get("id_projs") != null) {
             id_projects = (String) map.get("id_projs");
         }
-        System.out.println("LIST:"+id_techs);
-        System.out.println("name:"+empName+", tech_part_id:"+technology_part_id+", technologyName:"+technologyName+", wish_id:"+wish_id);
+        System.out.println("LIST:" + id_techs);
+        System.out.println("name:" + empName + ", tech_part_id:" + technology_part_id + ", technologyName:" + technologyName + ", wish_id:" + wish_id);
         if (map.get("id") != null) {
             Integer id = Integer.parseInt(map.get("id").toString());
-            employeesProjections = repository.selectEmployees(id,empName,technology_part_id,grade_id);
+            employeesProjections = repository.selectEmployees(id, empName, technology_part_id, grade_id, employee_type_id);
             if (employeesProjections.size() > 0) {
                 return new ResponseDto<>(true, "OK", employeesProjections);
-        }
-    } else {
-            if (id_techs==null && id_projects==null){
-                employeesProjections = repository.selectEmployees(empName,technology_part_id,technologyName,wish_id,grade_id);
+            }
+        } else {
+            if (id_techs == null && id_projects == null) {
+                employeesProjections = repository.selectEmployees(empName, technology_part_id, technologyName, wish_id, grade_id, employee_type_id);
                 if (employeesProjections.size() > 0) {
                     return new ResponseDto<>(true, "OK", employeesProjections);
                 }
-            } else if (id_techs!=null && id_projects==null) {
+            } else if (id_techs != null && id_projects == null) {
 //                texnologiyalar buyicha multiSelect li filtr
                 String[] stringArray = id_techs.split(",");
 
@@ -124,12 +128,11 @@ public class ImplEmployee implements EmployeesService {
                     intList.add(Integer.parseInt(s));
                 }
 
-                employeesProjections = repository.selectEmployees(empName,technology_part_id,technologyName,wish_id,intList,grade_id);
+                employeesProjections = repository.selectEmployees(empName, technology_part_id, technologyName, wish_id, intList, grade_id, employee_type_id);
                 if (employeesProjections.size() > 0) {
                     return new ResponseDto<>(true, "OK", employeesProjections);
                 }
-            }
-            else if (id_techs==null && id_projects!=null) {
+            } else if (id_techs == null && id_projects != null) {
 //                texnologiyalar buyicha multiSelect li filtr
                 String[] stringArray = id_projects.split(",");
 
@@ -139,7 +142,7 @@ public class ImplEmployee implements EmployeesService {
                     projs.add(Integer.parseInt(s));
                 }
 
-                employeesProjections = repository.selectEmployeesMs2(empName,technology_part_id,technologyName,wish_id,projs,grade_id);
+                employeesProjections = repository.selectEmployeesMs2(empName, technology_part_id, technologyName, wish_id, projs, grade_id, employee_type_id);
                 if (employeesProjections.size() > 0) {
                     return new ResponseDto<>(true, "OK", employeesProjections);
                 }
@@ -159,7 +162,7 @@ public class ImplEmployee implements EmployeesService {
                     intList.add(Integer.parseInt(s));
                 }
 
-                employeesProjections = repository.selectEmployeesMs3(empName,technology_part_id,technologyName,wish_id,projs,intList,grade_id);
+                employeesProjections = repository.selectEmployeesMs3(empName, technology_part_id, technologyName, wish_id, projs, intList, grade_id, employee_type_id);
                 if (employeesProjections.size() > 0) {
                     return new ResponseDto<>(true, "OK", employeesProjections);
                 }
@@ -174,7 +177,7 @@ public class ImplEmployee implements EmployeesService {
         Employee emp = new Employee();
         emp.setName(req.getName());
         Optional<Wish> wishOptional = wishRepository.findById(req.getWish_id());
-        if (!wishOptional.isPresent()){
+        if (!wishOptional.isPresent()) {
             return new ResponseDto<>(false, "Wish not found id:" + req.getWish_id());
         }
         emp.setWish(wishOptional.get());
@@ -220,7 +223,7 @@ public class ImplEmployee implements EmployeesService {
             entity.setCreated_user(byId.get().getCreated_user());
             entity.setSame_user(byId.get().getSame_user());
             Optional<Wish> wishOptional = wishRepository.findById(req.getWish_id());
-            if (!wishOptional.isPresent()){
+            if (!wishOptional.isPresent()) {
                 return new ResponseDto<>(false, "Wish not found id:" + req.getWish_id());
             }
             entity.setWish(wishOptional.get());
@@ -238,11 +241,11 @@ public class ImplEmployee implements EmployeesService {
                 Integer empId = byId.get().getId();
 
                 employeeProjectRepository.deleteByEmpId(empId);
-                if (req.getIdProjects().size()>0){
+                if (req.getIdProjects().size() > 0) {
                     List<EmployeeProject> ep = new LinkedList<>();
-                    for (Integer projectId:req.getIdProjects()) {
+                    for (Integer projectId : req.getIdProjects()) {
                         Optional<Project> project = projectRepository.findById(projectId);
-                        if (!project.isPresent()){
+                        if (!project.isPresent()) {
                             return new ResponseDto<>(false, "Data not found id:" + projectId);
                         }
                         EmployeeProject ept = new EmployeeProject();
@@ -281,17 +284,18 @@ public class ImplEmployee implements EmployeesService {
     @Override
     public ResponseDto<?> markTechGrades(TechGradeRqDto req) {
         Optional<Employee> byId = repository.findById(req.getEmployee_id());
-        if (byId.isPresent()){
-            if(req.getList().size()>0){
-                for (TechGrade item:req.getList()) {
+        if (byId.isPresent()) {
+            if (req.getList().size() > 0) {
+                for (TechGrade item : req.getList()) {
                     employeeTechnologyRepository.markTechGrades(item.getGrade_id(), req.getEmployee_id(), item.getTech_id());
                 }
             } else {
-                return new ResponseDto<>(false,"Gradesc not selected!");}
+                return new ResponseDto<>(false, "Gradesc not selected!");
+            }
         } else {
             return new ResponseDto<>(false, "Obyekt topilmadi id:" + req.getEmployee_id());
         }
-        return new ResponseDto<>(true,"Success");
+        return new ResponseDto<>(true, "Success");
     }
 }
 

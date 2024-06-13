@@ -8,6 +8,7 @@ public interface EmployeesProjection {
     Integer getTechnology_part_id();
     String getTechnology_part_name();
     String getDepartments_name();
+    String getEmployee_type_name();
     Integer getCreated_user_id();
     String getCreated_user_name();
     Integer getWish_id();
