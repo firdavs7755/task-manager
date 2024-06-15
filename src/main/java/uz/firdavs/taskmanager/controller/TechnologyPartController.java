@@ -13,6 +13,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/technology-part")
 @RequiredArgsConstructor
+@CrossOrigin(value = "*")
 public class TechnologyPartController {
 
     private final TechnologyPartService service;

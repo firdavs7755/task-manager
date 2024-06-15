@@ -22,7 +22,9 @@ public class WebConfiguration implements WebMvcConfigurer {
                 .allowedOrigins("http://localhost:8080", "http://localhost:8090") // Specify allowed origins
                 .allowedMethods("GET", "POST", "PUT", "DELETE")
                 .allowedHeaders("*")
-                .allowCredentials(true);;
+                .allowCredentials(false);
+
+//        .allowCredentials(false); todo localda false turadi
 /*
         registry.addMapping("/**")
                 .allowedMethods("GET")
