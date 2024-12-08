@@ -22,7 +22,9 @@ public interface EmployeeRepository extends BaseRepository<Employee, Integer> {
     Page<Employee> findAll(Specification<Employee> spec, Pageable pageable);
 
     @Query(nativeQuery = true,
-            value = " select et1.\"name\" as employee_type_name, a.wish_id,w.\"name\" as wish_name,a.created_user_id, u.fio as created_user_name, " +
+            value = " select " +
+                    " coalesce(et1.\"name\",'Belgilanmagan....') as employee_type_name," +
+                    " a.wish_id,w.\"name\" as wish_name,a.created_user_id, u.fio as created_user_name, " +
                     "t.technology_part_id, tp.name as technology_part_name, a.id as id, a.name as name, " +
                     "d.name as departments_name,  d.id as departments_id, " +
                     "cast(jsonb_agg(t.name) as text)  as skills , " +

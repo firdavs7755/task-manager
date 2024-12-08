@@ -48,7 +48,7 @@ public class ImplTopLike implements TopLikeService {
                 entity.setTop(top.get());
                 entity.setEmployee(employee.get());
                 repository.save(entity);
-                return new ResponseDto<>(true, "yaratildi");
+                return new ResponseDto<>(true, "Muvaffaqiyatli yaratildi");
             }
         } catch (Exception e) {
             log.error("Ma'lumotlar bilan ishlashda xatolik " + e.getMessage());

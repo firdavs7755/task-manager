@@ -114,7 +114,7 @@ public class ImplPurpose implements PurposeService {
                 employeePurposeRepository.saveAll(ep);
             }
 
-            return new ResponseDto<>(true, "yaratildi");
+            return new ResponseDto<>(true, "Muvaffaqiyatli yaratildi");
         } catch (Exception e) {
             log.error("Malamotlar bilan ishlashda xatolik " + e.getMessage());
             return new ResponseDto<>(false, "Yaratishda xatolik");

@@ -45,7 +45,7 @@ public class ImplTechnologyPart implements TechnologyPartService {
         technologies.setCreated_user(Utils.getUser());
         try {
             repository.save(technologies);
-            return new ResponseDto<>(true,"yaratildi");
+            return new ResponseDto<>(true,"Muvaffaqiyatli yaratildi");
         } catch (Exception e){
             log.error("Malarial bilan ishlashda xatolik "+e.getMessage());
             return new ResponseDto<>(false,"Yaratishda xatolik");
@@ -88,8 +88,8 @@ public class ImplTechnologyPart implements TechnologyPartService {
         Optional<TechnologyPart> byId = repository.findById(id);
         if (byId.isPresent()){
             repository.deleteById(id);
-            return new ResponseDto<>(true,"Muvaffaqiyatli bajarildi");
+            return new ResponseDto<>(true,"Muvaffaqiyatli o'chirildi ID:"+id);
         }
-        return new ResponseDto<>(false,"Obyekt topilmadi");
+        return new ResponseDto<>(false,"Obyekt topilmadi ID:"+id);
     }
 }

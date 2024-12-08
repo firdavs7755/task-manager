@@ -66,7 +66,7 @@ public class ImplDepartment implements DepartmentsService {
         }
         try {
             repository.save(entity);
-            return new ResponseDto<>(true, "Success created ");
+            return new ResponseDto<>(true, "Muffaqiyatli yaratildi");
         } catch (Exception e) {
             log.error("Malamotlar bilan ishlashda xatolik " + e.getMessage());
             return new ResponseDto<>(false, "Yaratishda xatolik");
@@ -94,7 +94,7 @@ public class ImplDepartment implements DepartmentsService {
         entity.setCreated_user(rowById.get().getCreated_user());
         try {
             repository.save(entity);
-            return new ResponseDto<>(true, "Success created ");
+            return new ResponseDto<>(true, "Muvaffaqiyatli tahrirlandi ID:"+id);
         } catch (Exception e) {
             log.error("Malamotlar bilan ishlashda xatolik " + e.getMessage());
             return new ResponseDto<>(false, "Yaratishda xatolik");
@@ -110,10 +110,10 @@ public class ImplDepartment implements DepartmentsService {
         }
         try {
             repository.deleteById(id);
-            return new ResponseDto<>(true, "Success deleted ");
+            return new ResponseDto<>(true, "Muvaffaqiyatli o'chirildi ID:"+id);
         } catch (Exception e) {
             log.error("Malamotlar bilan ishlashda xatolik " + e.getMessage());
-            return new ResponseDto<>(false, "Malamotlar bilan ishlashda xatolik ");
+            return new ResponseDto<>(false, "Malamotlar bilan ishlashda xatolik ID+"+id);
         }
     }
 

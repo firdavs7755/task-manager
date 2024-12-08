@@ -52,6 +52,7 @@ public class Utils {
     }
     public static <T,Dto> ResponseDto<?> generatePageable(BaseRepository<T, ?> repository, BaseMapper<Dto,T> mapper,Map<String,Object> map) {
         Pageable pageable = generatePageable(map);
+        pageable.getSort().and(orderByIdDesc());
         Page<T> all = repository.findAll(pageable);
         if (!all.isEmpty()){
             return new ResponseDto<>(

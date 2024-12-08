@@ -5,39 +5,33 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import uz.firdavs.taskmanager.dto.ResponseDto;
-import uz.firdavs.taskmanager.entity.Top;
-import uz.firdavs.taskmanager.mapper.TopMapper;
-import uz.firdavs.taskmanager.mapper.TopMapper;
-import uz.firdavs.taskmanager.payload.rq.TopRqDto;
-import uz.firdavs.taskmanager.projections.ReportProjection;
-import uz.firdavs.taskmanager.repository.TopRepository;
-import uz.firdavs.taskmanager.repository.TopRepository;
-import uz.firdavs.taskmanager.service.TopService;
-import uz.firdavs.taskmanager.service.TopService;
-import uz.firdavs.taskmanager.specifications.TopSpecification;
+import uz.firdavs.taskmanager.entity.Course;
+import uz.firdavs.taskmanager.mapper.CourseMapper;
+import uz.firdavs.taskmanager.payload.rq.CourseRqDto;
+import uz.firdavs.taskmanager.repository.CourseRepository;
+import uz.firdavs.taskmanager.service.CourseService;
+import uz.firdavs.taskmanager.specifications.CourseSpecification;
 import uz.firdavs.taskmanager.utis.Utils;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class ImplTop implements TopService {
-    private final TopRepository repository;
-    private final TopMapper mapper;
+public class ImplCourse implements CourseService {
+    private final CourseRepository repository;
+    private final CourseMapper mapper;
 
 
     @Override
-    public ResponseDto<?> selectTopLike() {
-        return new ResponseDto<>(true,"Ok",repository.selectTopLike());
-    }
-
-    @Override
-    public ResponseDto<?> createRow(TopRqDto req) {
-        Top entity = new Top();
+    public ResponseDto<?> createRow(CourseRqDto req) {
+        Course entity = new Course();
         entity.setName(req.getName());
+        entity.setPrice(req.getPrice());
+        entity.setLink(req.getLink());
+        entity.setLogin(req.getLogin());
+        entity.setPassword(req.getPassword());
         entity.setDescription(req.getDescription());
         entity.setCreated_user(Utils.getUser());
         try {
@@ -50,13 +44,18 @@ public class ImplTop implements TopService {
     }
 
     @Override
-    public ResponseDto<?> editRowById(TopRqDto req, Integer id) {
-        Optional<Top> rowById = repository.findById(id);
+    public ResponseDto<?> editRowById(CourseRqDto req, Integer id) {
+        Optional<Course> rowById = repository.findById(id);
         if (rowById.isPresent()) {
-            Top entity = new Top();
+            Course entity = new Course();
             entity.setId(id);
             entity.setName(req.getName());
+            entity.setPrice(req.getPrice());
+            entity.setLink(req.getLink());
+            entity.setLogin(req.getLogin());
+            entity.setPassword(req.getPassword());
             entity.setDescription(req.getDescription());
+            entity.setCreated_date(rowById.get().getCreated_date());
             entity.setCreated_user(rowById.get().getCreated_user());
             try {
                 repository.save(entity);
@@ -71,8 +70,8 @@ public class ImplTop implements TopService {
 
     @Override
     public ResponseDto<?> findAll(Map<String, Object> map) {
-        Specification<Top> specs = TopSpecification.filterTable(map);
-        Specification<Top> combinedSpecs = Specification.where(specs);
+        Specification<Course> specs = CourseSpecification.filterTable(map);
+        Specification<Course> combinedSpecs = Specification.where(specs);
         return Utils.generatePageable(repository, combinedSpecs, mapper, map);
     }
 
@@ -83,7 +82,7 @@ public class ImplTop implements TopService {
 
     @Override
     public ResponseDto<?> deleteRowById(Integer id) {
-        Optional<Top> byId = repository.findById(id);
+        Optional<Course> byId = repository.findById(id);
         if (byId.isPresent()) {
             repository.deleteById(id);
             return new ResponseDto<>(true, "Muvaffaqiyatli o'chirildi ID:"+id);

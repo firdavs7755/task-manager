@@ -31,7 +31,7 @@ public class ImplProject implements ProjectService {
         entity.setCreated_user(Utils.getUser());
         try {
             repository.save(entity);
-            return new ResponseDto<>(true, "yaratildi");
+            return new ResponseDto<>(true, "Muvaffaqiyatli yaratildi");
         } catch (Exception e) {
             log.error("Ma'lumotlar bilan ishlashda xatolik " + e.getMessage());
             return new ResponseDto<>(false, "Yaratishda xatolik");
@@ -74,8 +74,8 @@ public class ImplProject implements ProjectService {
         Optional<Project> byId = repository.findById(id);
         if (byId.isPresent()) {
             repository.deleteById(id);
-            return new ResponseDto<>(true, "Muvaffaqiyatli bajarildi");
+            return new ResponseDto<>(true, "Muvaffaqiyatli o'chirildi ID:"+id);
         }
-        return new ResponseDto<>(false, "Obyekt topilmadi");
+        return new ResponseDto<>(false, "Obyekt topilmadi ID:"+id);
     }
 }

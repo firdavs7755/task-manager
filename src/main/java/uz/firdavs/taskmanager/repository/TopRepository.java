@@ -34,13 +34,13 @@ public interface TopRepository extends BaseRepository<Top,Integer> {
                     "\t         t.created_user_id,\n" +
                     "\t         \tt.created_date ,\n" +
                     "  cast (jsonb_agg(tl.employee_id) as text) as liked_employee, " +
-                    "  'Yoqtiirganlar: '||cast (jsonb_agg(e.\"name\") as text) as liked_employee_name, " +
+                    "  'Yoqtrganlar: '||cast (jsonb_agg(e.\"name\") as text) as liked_employee_name, " +
                     "\t         \tcount(tl.id) as likes_cnt         \t\n" +
                     "       \t\tfrom top t\n" +
                     "       \t\tleft join top_like tl on tl.top_id = t.id\n" +
                     "           left join employee e on e.id = tl.employee_id " +
                     "       \t\tleft join users u on u.id = t.created_user_id \n" +
-                    "       \t\tgroup by t.id ,t.\"name\"  ,u.fio,t.created_date "
+                    "       \t\tgroup by t.id ,t.\"name\"  ,u.fio,t.created_date order by count(tl.id) desc"
     )
     List<TopLikeProjection> selectTopLike();
 

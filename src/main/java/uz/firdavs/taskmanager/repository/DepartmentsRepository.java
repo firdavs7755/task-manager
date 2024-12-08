@@ -51,7 +51,7 @@ public interface DepartmentsRepository extends BaseRepository<Department,Integer
                 "\t\t\t\t\t\tleft join technology t on t.id = et.technology_id\n" +
                 "\t\t\t\t\t\tgroup by et.employee_id,t.technology_part_id\n" +
                 "\t\t\t\t\t) etp_f on etp_f.target_id = e.id group by d.id\n" +
-                "        ) dev on dev.target_id = d.id"
+                "        ) dev on dev.target_id = d.id "
     )
     List<ReportProjection> selectEmpsSectionByDepar();
 }

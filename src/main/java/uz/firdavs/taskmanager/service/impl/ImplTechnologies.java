@@ -57,7 +57,7 @@ public class ImplTechnologies implements TechnologiesService {
         technology.setCreated_user(Utils.getUser());
         Optional<TechnologyPart> technologyPart = technologyPartRepository.findById(req.getTechnology_part_id());
         if (!technologyPart.isPresent()){
-            return new ResponseDto<>(false,"Obyekt topilmadi");
+            return new ResponseDto<>(false,"Obyekt topilmadi ID:"+req.getTechnology_part_id());
         }
         technology.setTechnologyPart(technologyPart.get());
         try {
@@ -66,7 +66,7 @@ public class ImplTechnologies implements TechnologiesService {
                 return new ResponseDto<>(false,"Texnologiya mavjud");
             }
             repository.save(technology);
-            return new ResponseDto<>(true,"yaratildi");
+            return new ResponseDto<>(true,"Muvaffaqiyatli yaratildi");
         } catch (Exception e){
             log.error("Malarial bilan ishlashda xatolik "+e.getMessage());
             return new ResponseDto<>(false,"Yaratishda xatolik");
@@ -84,7 +84,7 @@ public class ImplTechnologies implements TechnologiesService {
             technology.setCreated_user(byId.get().getCreated_user());
             Optional<TechnologyPart> technologyPart = technologyPartRepository.findById(req.getTechnology_part_id());
             if (!technologyPart.isPresent()){
-                return new ResponseDto<>(false,"Obyekt topilmadi");
+                return new ResponseDto<>(false,"Obyekt topilmadi ID:"+id);
             }
             technology.setTechnologyPart(technologyPart.get());
             technology.setId(id);
@@ -114,8 +114,8 @@ public class ImplTechnologies implements TechnologiesService {
         Optional<Technology> byId = repository.findById(id);
         if (byId.isPresent()){
             repository.deleteById(id);
-            return new ResponseDto<>(true,"Muvaffaqiyatli bajarildi");
+            return new ResponseDto<>(true,"Muvaffaqiyatli o'chirildi ID:"+id);
         }
-        return new ResponseDto<>(false,"Obyekt topilmadi");
+        return new ResponseDto<>(false,"Obyekt topilmadi ID:"+id);
     }
 }

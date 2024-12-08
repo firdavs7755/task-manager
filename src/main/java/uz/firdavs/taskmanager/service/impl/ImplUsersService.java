@@ -32,8 +32,11 @@ public class ImplUsersService implements UsersService {
      private final UsersRepository repository;
 
      private final RoleRepository roleRepository;
+     private final TechnologyRepository technologyRepository;
      private final EmployeeRepository employeeRepository;
      private final WishRepository wishRepository;
+     private final PurposeRepository purposeRepository;
+     private final EmployeePurposeRepository employeePurposeRepository;
      private final EmployeeTypeRepository employeeTypeRepository;
 
      private final TokenRepository tokenRepository;
@@ -169,6 +172,16 @@ public class ImplUsersService implements UsersService {
             }
             employee.setEmployeeType(employeeType.get());
             employeeRepository.save(employee);
+            // Xodim kbinetiga kirganda ourposeni yangilashi un pustoy purpose yaratib quyaman
+            Purpose purpose = new Purpose();
+            Purpose savedPurpose = purposeRepository.save(purpose);
+
+            EmployeePurpose employeePurpose = new EmployeePurpose();
+            employeePurpose.setPurpose(savedPurpose);
+            employeePurpose.setEmployee(employee);
+            employeePurpose.setTechnology(technologyRepository.findById(21).get());
+            employeePurposeRepository.save(employeePurpose);
+            //
             return new ResponseDto<>(true, "Successfully");
         } catch (Exception e) {
             log.error("Exp on manupulating {}" + e.getMessage());

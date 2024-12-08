@@ -62,9 +62,9 @@ public class ImplEmployee implements EmployeesService {
         Optional<Employee> byId = repository.findById(id);
         if (byId.isPresent()) {
             repository.deleteById(id);
-            return new ResponseDto<>(true, "Muvaffaqiyatli bajarildi");
+            return new ResponseDto<>(true, "Muvaffaqiyatli o'chirildi ID:"+id);
         }
-        return new ResponseDto<>(false, "Obyekt topilmadi");
+        return new ResponseDto<>(false, "Obyekt topilmadi ID:"+id);
     }
 
 
@@ -207,7 +207,7 @@ public class ImplEmployee implements EmployeesService {
                 employeeTechnologyRepository.saveAll(et);
             }
 
-            return new ResponseDto<>(true, "yaratildi");
+            return new ResponseDto<>(true, "Muvaffaqiyatli yaratildi");
         } catch (Exception e) {
             log.error("Malamotlar bilan ishlashda xatolik " + e.getMessage());
             return new ResponseDto<>(false, "Yaratishda xatolik");
